@@ -40,6 +40,8 @@ export default function Login() {
     } catch (err) {
       if (err.response?.status === 401) {
         setErrorGeneral("Email o contraseña incorrectos.");
+      } else if (err.response?.status === 403) {
+        setErrorGeneral("Tu cuenta todavía no fue activada. Esperá a que un administrador la habilite.");
       } else if (err.code === "ECONNABORTED" || !err.response) {
         setErrorGeneral("No se pudo conectar con el servidor. Probá de nuevo en unos segundos.");
       } else {

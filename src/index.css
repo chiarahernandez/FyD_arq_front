@@ -273,6 +273,13 @@ input:focus-visible {
   padding-bottom: 2rem;
 }
 
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  padding-bottom: 2rem;
+}
+
 .product-card {
   display: flex;
   flex-direction: column;
@@ -384,4 +391,60 @@ input:focus-visible {
 
 @media (min-width: 1024px) {
   .grid-productos { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.table th {
+  color: var(--color-texto-suave);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* ---------- Tabs (box "Tus pedidos" / "Todos los pedidos") ---------- */
+.tabs {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--color-borde);
+  margin-bottom: 1rem;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  padding: 0.5rem 0.2rem;
+  margin-bottom: -1px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+}
+.tab-btn:hover { color: var(--color-texto); }
+.tab-btn-activo {
+  color: var(--color-violeta);
+  border-bottom-color: var(--color-violeta);
+}
+
+/* ---------- Paginado ---------- */
+.paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-borde);
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
 }

@@ -19,7 +19,17 @@ export default function Navbar() {
         </Link>
         {isAuthenticated && (
           <nav className="navbar-actions">
-            <span className="navbar-user">{usuario?.email}</span>
+            <span className="navbar-user">
+              {usuario?.nombre || usuario?.email}
+              {usuario?.rol === "admin" && (
+                <span className="badge" style={{ marginLeft: "0.5rem" }}>Admin</span>
+              )}
+            </span>
+            {usuario?.rol === "admin" && (
+              <Link to="/admin" className="btn btn-ghost" style={{ padding: "0.4rem 0.9rem", fontSize: "0.85rem" }}>
+                Admin
+              </Link>
+            )}
             <button className="navbar-logout" onClick={handleLogout}>
               Cerrar sesión
             </button>

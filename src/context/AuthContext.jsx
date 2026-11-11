@@ -33,8 +33,8 @@ export function AuthProvider({ children }) {
     return data;
   }, []);
 
-  const registrar = useCallback(async (email, password) => {
-    const { data } = await client.post("/auth/registro", { email, password });
+  const registrar = useCallback(async (email, password, nombre) => {
+    const { data } = await client.post("/auth/registro", { email, password, nombre });
     return data;
   }, []);
 

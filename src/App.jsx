@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import Catalogo from "./pages/Catalogo";
+import Admin from "./pages/Admin";
 
 export default function App() {
   return (
@@ -17,6 +18,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Catalogo />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly>
+              <Admin />
             </ProtectedRoute>
           }
         />

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useToast } from "../context/ToastContext";
 import Spinner from "../components/Spinner";
 import logo from "../assets/logo.png";
 
@@ -9,19 +8,22 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD = 8;
 
 export default function Registro() {
-  const { registrar, login } = useAuth();
-  const toast = useToast();
+  const { registrar } = useAuth();
   const navigate = useNavigate();
 
+  const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [errors, setErrors] = useState({});
   const [cargando, setCargando] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState("");
+  const [registrado, setRegistrado] = useState(false);
+  const [idRegistrado, setIdRegistrado] = useState("");
 
   function validar() {
     const e = {};
+    if (!nombre.trim()) e.nombre = "Ingresá tu nombre.";
     if (!EMAIL_RE.test(email)) e.email = "Ingresá un email válido.";
     if (password.length < MIN_PASSWORD) e.password = `Mínimo ${MIN_PASSWORD} caracteres.`;
     if (confirmar !== password) e.confirmar = "Las contraseñas no coinciden.";
@@ -36,15 +38,17 @@ export default function Registro() {
 
     setCargando(true);
     try {
-      await registrar(email, password);
-      // tras registrarse, iniciamos sesión automáticamente para no pedirle
-      // al usuario que vuelva a tipear las credenciales
-      await login(email, password);
-      toast.success("Cuenta creada. ¡Bienvenido!");
-      navigate("/", { replace: true });
+      const data = await registrar(email, password, nombre.trim());
+      // La cuenta queda inactiva hasta que un administrador la active
+      // (PB-02/PB-03/PB-04): ya no iniciamos sesión automáticamente acá,
+      // porque el login la va a rechazar con 403 hasta ese momento.
+      setIdRegistrado(data?.id ?? "");
+      setRegistrado(true);
     } catch (err) {
-      if (err.response?.status === 400 || err.response?.status === 409) {
+      if (err.response?.status === 409) {
         setErrorGeneral("Ese email ya está registrado.");
+      } else if (err.response?.status === 400) {
+        setErrorGeneral("Revisá los datos ingresados.");
       } else if (err.code === "ECONNABORTED" || !err.response) {
         setErrorGeneral("No se pudo conectar con el servidor. Probá de nuevo en unos segundos.");
       } else {
@@ -53,6 +57,36 @@ export default function Registro() {
     } finally {
       setCargando(false);
     }
+  }
+
+  if (registrado) {
+    return (
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <img src={logo} alt="FYD" className="auth-logo" />
+          <div className="card">
+            <h1 className="auth-title">Cuenta creada</h1>
+            <div className="alert alert-ok">
+              Tu cuenta quedó registrada y pendiente de activación. Un
+              administrador tiene que habilitarla antes de que puedas iniciar
+              sesión.
+            </div>
+            {idRegistrado && (
+              <p style={{ fontSize: "0.85rem", color: "var(--color-texto-suave)", marginBottom: "1.1rem" }}>
+                Pasale este ID a un administrador para que active tu cuenta:
+                <br />
+                <code style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--color-texto)", userSelect: "all" }}>
+                  {idRegistrado}
+                </code>
+              </p>
+            )}
+            <button className="btn btn-primary btn-block" onClick={() => navigate("/login")}>
+              Ir a iniciar sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -66,6 +100,19 @@ export default function Registro() {
         {errorGeneral && <div className="alert alert-error">{errorGeneral}</div>}
 
         <form onSubmit={handleSubmit} noValidate>
+          <div className="field">
+            <label htmlFor="nombre">Nombre</label>
+            <input
+              id="nombre"
+              type="text"
+              autoComplete="name"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              aria-invalid={Boolean(errors.nombre)}
+            />
+            {errors.nombre && <span className="field-error">{errors.nombre}</span>}
+          </div>
+
           <div className="field">
             <label htmlFor="email">Email</label>
             <input
