@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import ProductCard from "../components/ProductCard";
 import Spinner from "../components/Spinner";
+import BlockchainBadge from "../components/BlockchainBadge";
 
 const HISTORIAL_KEY_PREFIJO = "uchfyd_pedidos_sesion";
 const PEDIDOS_POR_PAGINA = 15;
@@ -241,6 +242,7 @@ export default function Catalogo() {
                       <th>Precio unitario</th>
                       <th>Total</th>
                       <th>Fecha</th>
+                      <th>Blockchain</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -252,6 +254,7 @@ export default function Catalogo() {
                         <td>${Number(p.precioUnitario).toFixed(2)}</td>
                         <td>${Number(p.importeTotal).toFixed(2)}</td>
                         <td>{formatearFecha(p.fecha)}</td>
+                        <td><BlockchainBadge pedidoId={p.pedidoId} esAdmin={esAdmin} /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -278,6 +281,7 @@ export default function Catalogo() {
                           <th>Precio unitario</th>
                           <th>Total</th>
                           {claveFecha && <th>Fecha</th>}
+                          <th>Blockchain</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -299,6 +303,7 @@ export default function Catalogo() {
                             <td>${Number(p.precio_historico).toFixed(2)}</td>
                             <td>${Number(p.importe_total).toFixed(2)}</td>
                             {claveFecha && <td>{formatearFecha(p[claveFecha])}</td>}
+                            <td><BlockchainBadge pedidoId={p.id} esAdmin /></td>
                           </tr>
                         ))}
                       </tbody>

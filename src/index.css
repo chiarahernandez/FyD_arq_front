@@ -448,3 +448,30 @@ input:focus-visible {
   font-size: 0.85rem;
   color: var(--color-texto-suave);
 }
+
+/* ---------- Badge de registro en blockchain ---------- */
+.bc-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+a.bc-badge:hover { text-decoration: underline; }
+.bc-ok { background: var(--color-ok-bg); color: var(--color-ok); }
+.bc-error { background: var(--color-error-bg); color: var(--color-error); }
+.bc-pendiente { background: #fff6dc; color: #8a6100; }
+.bc-gris { background: #f0f0f0; color: var(--color-texto-suave); }
+.bc-acciones { display: inline-flex; align-items: center; gap: 0.4rem; }
+.bc-reintentar {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--color-violeta);
+  color: var(--color-violeta);
+  background: transparent;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.bc-reintentar:disabled { opacity: 0.5; cursor: default; }
