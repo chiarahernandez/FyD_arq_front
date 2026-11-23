@@ -168,6 +168,10 @@ export default function Catalogo() {
 
   const mostrarBoxPedidos = esAdmin || historial.length > 0;
 
+  // Pedidos creados en esta sesión: el badge de blockchain espera a que aparezcan
+  // en la cola en vez de mostrarlos como "Sin registro" (ver BlockchainBadge).
+  const idsSesion = new Set(historial.map((h) => h.pedidoId));
+
   return (
     <div className="container">
       <div className="page-header">
@@ -254,7 +258,7 @@ export default function Catalogo() {
                         <td>${Number(p.precioUnitario).toFixed(2)}</td>
                         <td>${Number(p.importeTotal).toFixed(2)}</td>
                         <td>{formatearFecha(p.fecha)}</td>
-                        <td><BlockchainBadge pedidoId={p.pedidoId} esAdmin={esAdmin} /></td>
+                        <td><BlockchainBadge pedidoId={p.pedidoId} esAdmin={esAdmin} reciente /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -303,7 +307,7 @@ export default function Catalogo() {
                             <td>${Number(p.precio_historico).toFixed(2)}</td>
                             <td>${Number(p.importe_total).toFixed(2)}</td>
                             {claveFecha && <td>{formatearFecha(p[claveFecha])}</td>}
-                            <td><BlockchainBadge pedidoId={p.id} esAdmin /></td>
+                            <td><BlockchainBadge pedidoId={p.id} esAdmin reciente={idsSesion.has(p.id)} /></td>
                           </tr>
                         ))}
                       </tbody>

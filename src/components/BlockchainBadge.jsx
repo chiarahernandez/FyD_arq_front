@@ -9,7 +9,10 @@ const MAX_CONSULTAS = 36; // ~3 minutos
 
 const EN_CURSO = new Set(["pendiente", "enviado"]);
 
-export default function BlockchainBadge({ pedidoId, esAdmin = false }) {
+// `reciente`: el pedido se acaba de crear en esta sesión. Solo en ese caso un
+// "no_registrado" se toma como "todavía no llegó a la cola" y se sigue consultando;
+// en un pedido viejo, "no_registrado" es definitivo.
+export default function BlockchainBadge({ pedidoId, esAdmin = false, reciente = false }) {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState(false);
   const [reintentando, setReintentando] = useState(false);
@@ -30,10 +33,9 @@ export default function BlockchainBadge({ pedidoId, esAdmin = false }) {
     consultar();
   }, [consultar]);
 
-  // Un pedido recién creado puede todavía no tener registro: "no_registrado"
-  // también se re-consulta durante la ventana de polling.
+  const esperandoCola = reciente && info?.estado === "no_registrado";
   const seguirConsultando =
-    !error && (info === null || EN_CURSO.has(info.estado) || info.estado === "no_registrado");
+    !error && (info === null || EN_CURSO.has(info.estado) || esperandoCola);
 
   useEffect(() => {
     if (!seguirConsultando || consultas.current >= MAX_CONSULTAS) return undefined;
@@ -96,7 +98,7 @@ export default function BlockchainBadge({ pedidoId, esAdmin = false }) {
     );
   }
 
-  if (EN_CURSO.has(info.estado) || (info.estado === "no_registrado" && consultas.current < MAX_CONSULTAS)) {
+  if (EN_CURSO.has(info.estado) || (esperandoCola && consultas.current < MAX_CONSULTAS)) {
     return (
       <span className="bc-badge bc-pendiente" title="Esperando confirmación de la transacción">
         ⏳ Registrando…
